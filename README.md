@@ -12,7 +12,7 @@ npm install --save tiny-http-router
 
 ```js
 import http from 'http'
-import { router } from './index.js'
+import { router } from 'tiny-http-router'
 
 async function yolo(req, res) {
   const id = this.id || 'yolo'
