@@ -5,6 +5,10 @@ const wrap = (fn, params={}) => {
   return async function(req, res) {
     params.query = url.parse(req.url, true).query
     params.send = (status, payload, content_type='text/plain', headers={}) => {
+      if (typeof payload === 'object') {
+        payload = JSON.stringify(payload)
+        content_type = 'application/json'
+      }
       res.writeHead(status, Object.assign({ 'Content-Type': content_type }, headers))
       res.end(payload)
     }

@@ -10,7 +10,7 @@ async function query(req, res, { send, query }) {
 }
 
 async function json(req, res, { send }) {
-  send(200, JSON.stringify({ eple: 'kake' }), 'application/json')
+  send(200, { eple: 'kake' })
 }
 
 const server = http.createServer(router({
