@@ -10,7 +10,7 @@ npm install --save tiny-http-router
 
 ## Use
 
-```
+```js
 import http from 'http'
 import { router } from './index.js'
 
