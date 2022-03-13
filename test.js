@@ -1,27 +1,27 @@
 import http from 'http'
 import { router } from './index.js'
 
-async function yolo(req, res) {
-  const id = this.id || 'yolo'
-  res.writeHead(200, { 'Content-Type': 'text/plain' })
-  res.end(id)
+const yolo = async (req, res, { send, id }) => {
+  send(200, id || 'yolo')
 }
 
-async function query(req, res) {
-  const query = this?.query?.eple || 'query'
-  res.writeHead(200, { 'Content-Type': 'text/plain' })
-  res.end(query)
+async function query(req, res, { send, query }) {
+  send(200, query?.eple || 'query')
+}
+
+async function json(req, res, { send }) {
+  send(200, JSON.stringify({ eple: 'kake' }), 'application/json')
 }
 
 const server = http.createServer(router({
   // Routes
   '/yolo'     : yolo,
   '/yolo/:id' : yolo,
-  '/query'    : query 
-}, (req, res) => {
+  '/query'    : query,
+  '/json'     : json 
+}, (req, res, { send }) => {
   // Default (if not route hits)
-  res.writeHead(200, { 'Content-Type': 'text/plain' })
-  res.end('default')
+  send(200, 'default')
 })).listen(8080)
 
 import fetch from 'node-fetch'
@@ -36,6 +36,10 @@ import assert from 'assert'
   assert(r3 === '2')
   const r4 = await fetch('http://localhost:8080/query?eple=kake').then(res => res.text())
   assert(r4 === 'kake')
+  const r5 = await fetch('http://localhost:8080/json')
+  assert(r5.headers.get('content-type') === 'application/json')
+  const r5j = await r5.json()
+  assert(r5j?.eple === 'kake')
   console.log('All good dog')
   server.close() 
 })()

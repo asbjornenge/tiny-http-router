@@ -14,20 +14,17 @@ npm install --save tiny-http-router
 import http from 'http'
 import { router } from 'tiny-http-router'
 
-async function yolo(req, res) {
-  const id = this.id || 'yolo'
-  res.writeHead(200, { 'Content-Type': 'text/plain' })
-  res.end(id)
+const yolo = async (req, res, { send, id }) => {
+  send(200, id || 'yolo')
 }
 
 const server = http.createServer(router({
   // Routes
   '/yolo' : yolo,
   '/yolo/:id' : yolo
-}, (req, res) => {
+}, (req, res, { send }) => {
   // Default (if not route hits)
-  res.writeHead(200, { 'Content-Type': 'text/plain' })
-  res.end('default')
+  send(200, 'default')
 })).listen(8080)
 ```
 
