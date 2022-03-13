@@ -1,4 +1,5 @@
 import Route from 'route-parser'
+import url from 'url'
 
 export function router(routes, defaultHandler) {
   const _routes = Object.keys(routes).map(r => { 
@@ -7,7 +8,10 @@ export function router(routes, defaultHandler) {
   return async function(req, res) {
     const fn = _routes.reduce((def,r) => {
       let params = r.route.match(req.url)
-      if (params) return r.handler.bind(params)
+      if (params) {
+        params.query = url.parse(req.url, true).query
+        return r.handler.bind(params)
+      }
       return def
     }, defaultHandler)
     fn(req, res)

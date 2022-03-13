@@ -7,10 +7,17 @@ async function yolo(req, res) {
   res.end(id)
 }
 
+async function query(req, res) {
+  const query = this?.query?.eple || 'query'
+  res.writeHead(200, { 'Content-Type': 'text/plain' })
+  res.end(query)
+}
+
 const server = http.createServer(router({
   // Routes
-  '/yolo' : yolo,
-  '/yolo/:id' : yolo
+  '/yolo'     : yolo,
+  '/yolo/:id' : yolo,
+  '/query'    : query 
 }, (req, res) => {
   // Default (if not route hits)
   res.writeHead(200, { 'Content-Type': 'text/plain' })
@@ -27,6 +34,8 @@ import assert from 'assert'
   assert(r2 === 'yolo')
   const r3 = await fetch('http://localhost:8080/yolo/2').then(res => res.text())
   assert(r3 === '2')
+  const r4 = await fetch('http://localhost:8080/query?eple=kake').then(res => res.text())
+  assert(r4 === 'kake')
   console.log('All good dog')
   server.close() 
 })()
