@@ -1,5 +1,26 @@
 import Route from 'route-parser'
 import url from 'url'
+import bodyParser from 'body-parser'
+
+const jsonParser = bodyParser.json()
+const jsonParserAsync = (req, res) => {
+  return new Promise((resolve, reject) => {
+    jsonParser(req, res, (err) => {
+      if (err) return reject(err)
+      resolve(req.body)
+    })
+  })
+}
+
+const textParser = bodyParser.text()
+const textParserAsync = (req, res) => {
+  return new Promise((resolve, reject) => {
+    textParser(req, res, (err) => {
+      if (err) return reject(err)
+      resolve(req.body)
+    })
+  })
+}
 
 const wrap = (fn, params={}) => {
   return async function(req, res) {
@@ -12,12 +33,14 @@ const wrap = (fn, params={}) => {
       res.writeHead(status, Object.assign({ 'Content-Type': content_type }, headers))
       res.end(payload)
     }
+    params.json = async () => { return await jsonParserAsync(req, res) } 
+    params.text = async () => { return await textParserAsync(req, res) }
     await fn(req, res, params)
   }
 }
 
 export function router(routes, defaultHandler) {
-  const _routes = Object.keys(routes).map(r => { 
+  const _routes = Object.keys(routes).map(r => {
     return {route: new Route(r), handler: routes[r] }
   })
   return async function(req, res) {
