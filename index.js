@@ -52,3 +52,13 @@ export function router(routes, defaultHandler) {
     fn(req, res)
   }
 }
+
+export function method(method, fn) {
+  return async function(req, res, params) {
+    if (req.method !== method) {
+      res.writeHead(400, { 'Content-Type': 'text/plan' })
+      return res.end(`Unsupported http method ${req.method}`)
+    }
+    return await fn(req, res, params)
+  }
+}

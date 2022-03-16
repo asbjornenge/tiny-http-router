@@ -1,5 +1,5 @@
 import http from 'http'
-import { router } from './index.js'
+import { router, method } from './index.js'
 
 const yolo = async (req, res, { send, id }) => {
   send(200, id || 'yolo')
@@ -32,7 +32,8 @@ const server = http.createServer(router({
   '/query'     : query,
   '/json'      : json,
   '/json/post' : jsonPost,
-  '/text/post' : textPost 
+  '/text/post' : textPost,
+  '/get'       : method('GET', yolo) 
 }, (req, res, { send }) => {
   // Default (if not route hits)
   send(200, 'default')
@@ -71,6 +72,11 @@ import assert from 'assert'
     body: 'eplekakefis'
   }).then(res => res.text())
   assert(r8 === 'eplekakefis')
+
+  const r9 = await fetch('http://localhost:8080/get', { method: 'DELETE' })
+  assert(r9.status === 400)
+  const r10 = await fetch('http://localhost:8080/get', { method: 'GET' })
+  assert(r10.status === 200)
 
   console.log('All good dog')
   server.close() 
