@@ -1,5 +1,5 @@
 import http from 'http'
-import { router, method } from './index.js'
+import { router, method, methods } from './index.js'
 
 const yolo = async (req, res, { send, id }) => {
   send(200, id || 'yolo')
@@ -33,7 +33,11 @@ const server = http.createServer(router({
   '/json'      : json,
   '/json/post' : jsonPost,
   '/text/post' : textPost,
-  '/get'       : method('GET', yolo) 
+  '/get'       : method('GET', yolo),
+  '/methods'   : methods({
+    GET: yolo,
+    POST: yolo
+  }) 
 }, (req, res, { send }) => {
   // Default (if not route hits)
   send(200, 'default')
@@ -77,6 +81,17 @@ import assert from 'assert'
   assert(r9.status === 400)
   const r10 = await fetch('http://localhost:8080/get', { method: 'GET' })
   assert(r10.status === 200)
+
+  const r11 = await fetch('http://localhost:8080/methods', { method: 'GET' })
+  assert(r11.status === 200)
+
+  const r12 = await fetch('http://localhost:8080/methods', { method: 'POST' })
+  assert(r12.status === 200)
+
+  const r13 = await fetch('http://localhost:8080/methods', { method: 'PATCH' })
+  assert(r13.status === 400)
+  const r13_text = await r13.text()
+  assert(r13_text === 'Unsupported http method')
 
   console.log('All good dog')
   server.close() 

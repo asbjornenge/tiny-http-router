@@ -62,3 +62,11 @@ export function method(method, fn) {
     return await fn(req, res, params)
   }
 }
+
+export function methods(config) {
+  return async function(req, res, params) {
+    const fn = config[req.method]
+    if (!fn) return params.send(400, 'Unsupported http method')
+    else return await fn(req,res,params)
+  }
+}
