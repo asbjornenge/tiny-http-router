@@ -12,7 +12,7 @@ npm install --save tiny-http-router
 
 ```js
 import http from 'http'
-import { router, method } from 'tiny-http-router'
+import { router, method, methods } from 'tiny-http-router'
 
 const yolo = async (req, res, { send, id }) => {
   send(200, id || 'yolo')
@@ -21,7 +21,11 @@ const yolo = async (req, res, { send, id }) => {
 const server = http.createServer(router({
   // Routes
   '/yolo' : yolo,
-  '/yolo/:id' : method('GET', yolo)
+  '/yolo/:id' : method('GET', yolo),
+  '/bolo/:id' : methods({
+    GET: yolo,
+    POST: yolo
+  })
 }, (req, res, { send }) => {
   // Default (if not route hits)
   send(200, 'default')
@@ -31,8 +35,9 @@ const server = http.createServer(router({
 ## Exports
 
 ```
-router - funciton that takes object of routes
-method - function wrapper to enforce http method
+router  - funciton that takes object of routes
+method  - function wrapper to enforce http method
+methods - function wrapper to enforce http methods
 ```
 
 ## Params
